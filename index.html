@@ -697,12 +697,6 @@
                 
                 // Add QR code
                 ctx.drawImage(this.currentQRCode, padding, titleHeight + padding, qrSize, qrSize);
-                
-                // Add powered by text at bottom
-                ctx.fillStyle = '#6b7280';
-                ctx.font = '14px Arial, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('Powered by emilpro MIS 2026', compositeCanvas.width / 2, totalHeight - 15);
 
                 const link = document.createElement('a');
                 link.download = filename;
