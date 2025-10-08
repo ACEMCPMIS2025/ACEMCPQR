@@ -368,16 +368,42 @@
             }
 
             createPasswordProtectedURL(originalUrl, password) {
-                // Create a password-protected URL that points to our verification page
+                // Create a secure token-based URL that doesn't expose the password
                 const encodedUrl = encodeURIComponent(originalUrl);
-                const encodedPassword = encodeURIComponent(password);
                 
-                // Create URL that points to password verification page with protected data
-                // Use your domain for password verification
-                const protectedData = `protected://${encodedPassword}:${encodedUrl}`;
-                const verificationUrl = `https://acemcpqrgen.vercel.app//password-verification.html?data=${encodeURIComponent(protectedData)}`;
+                // Generate a secure token (in a real app, this would be server-generated)
+                const token = this.generateSecureToken();
+                
+                // Store the password securely (in a real app, this would be server-side)
+                this.storePasswordForToken(token, password);
+                
+                // Create URL that points to password verification page with only the token
+                const verificationUrl = `password-verification.html?token=${token}&url=${encodedUrl}`;
                 
                 return verificationUrl;
+            }
+
+            generateSecureToken() {
+                // Generate a cryptographically secure random token
+                const array = new Uint8Array(32);
+                crypto.getRandomValues(array);
+                return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+            }
+
+            storePasswordForToken(token, password) {
+                // In a real application, this would be stored server-side
+                // For this demo, we'll use sessionStorage with a timeout
+                const passwordData = {
+                    password: password,
+                    timestamp: Date.now(),
+                    expires: Date.now() + (30 * 60 * 1000) // 30 minutes
+                };
+                
+                try {
+                    sessionStorage.setItem(`qr_token_${token}`, JSON.stringify(passwordData));
+                } catch (error) {
+                    console.error('Failed to store password token:', error);
+                }
             }
 
 
