@@ -378,7 +378,8 @@
                 this.storePasswordForToken(token, password);
                 
                 // Create URL that points to password verification page with only the token
-                const verificationUrl = `password-verification.html?token=${token}&url=${encodedUrl}`;
+                // Use the full domain URL for the verification page
+                const verificationUrl = `https://acemcpqrgen.vercel.app/password-verification.html?token=${token}&url=${encodedUrl}`;
                 
                 return verificationUrl;
             }
