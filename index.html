@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACEMCP QR Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.2.1/dist/flowbite.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        // Ensure QRCode library is loaded
+        window.addEventListener('load', function() {
+            if (typeof QRCode === 'undefined') {
+                console.error('QRCode library failed to load');
+                // Try alternative CDN
+                const script = document.createElement('script');
+                script.src = 'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js';
+                script.onload = function() {
+                    console.log('QRCode library loaded from fallback CDN');
+                };
+                script.onerror = function() {
+                    console.error('Failed to load QRCode library from fallback CDN');
+                };
+                document.head.appendChild(script);
+            } else {
+                console.log('QRCode library loaded successfully');
+            }
+        });
+    </script>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-gray-300 min-h-screen">
+    <div class="container mx-auto px-4 py-6 sm:py-8">
+        <!-- Header -->
+        <div class="text-center mb-6 sm:mb-8 fade-in">
+            <div class="logo-container inline-flex items-center justify-center w-20 h-20 mb-4 animate-pulse-slow">
+                <img src="logo/logo.png" alt="ACEMCP Logo" class="w-20 h-20 object-contain">
+            </div>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 mb-2 drop-shadow-lg">ACEMCP QR Generator</h1>
+            <p class="text-gray-600 text-sm sm:text-base">For ACEMCP Only use only</p>
+            
+            <!-- Mobile-friendly quick actions -->
+            <div class="mt-4 flex flex-wrap justify-center gap-2 sm:hidden">
+                <button onclick="document.getElementById('urlInput').focus()" 
+                        class="bg-gradient-to-r from-red-500 to-green-500 hover:from-red-600 hover:to-green-600 text-white px-3 py-2 rounded-lg text-sm transition-all duration-200 touch-target">
+                    <i class="fas fa-edit mr-1"></i> Quick Start
+                </button>
+                <button onclick="document.getElementById('logoUpload').click()" 
+                        class="bg-gradient-to-r from-green-500 to-red-500 hover:from-green-600 hover:to-red-600 text-white px-3 py-2 rounded-lg text-sm transition-all duration-200 touch-target">
+                    <i class="fas fa-image mr-1"></i> Add Logo
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
+                <!-- Input Section -->
+                <div class="glass-effect rounded-2xl shadow-2xl p-6 sm:p-8 hover-lift">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-r from-gray-800 to-gray-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-cog text-white text-sm"></i>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800">QR Code Settings</h2>
+                    </div>
+                    
+                    <!-- QR Code Title -->
+                    <div class="mb-6">
+                        <label for="qrTitle" class="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                            <i class="fas fa-tag mr-2"></i>
+                            QR Code Title (Optional)
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="qrTitle" placeholder="Enter a title for your QR code" 
+                                   class="w-full px-4 py-3 bg-white/90 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-400 focus:bg-white transition-all duration-200 text-gray-800 placeholder-gray-500">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <i class="fas fa-tag text-gray-400"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-2 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            This title will appear above the QR code and in the downloaded image
+                        </p>
+                    </div>
+                    
+                    <!-- URL Input -->
+                    <div class="mb-6">
+                        <label for="urlInput" class="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                            <i class="fas fa-link mr-2"></i>
+                            Enter URL or Text
+                        </label>
+                        <div class="relative">
+                        <input type="text" id="urlInput" placeholder="https://example.com or any text" 
+                                   class="w-full px-4 py-3 bg-white/90 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-400 focus:bg-white transition-all duration-200 text-gray-800 placeholder-gray-500">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <i class="fas fa-edit text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logo Upload -->
+                    <div class="mb-6">
+                        <label for="logoUpload" class="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                            <i class="fas fa-image mr-2"></i>
+                            Upload Logo (Optional)
+                        </label>
+                        <div class="relative">
+                        <input type="file" id="logoUpload" accept="image/*" 
+                                   class="w-full px-4 py-4 bg-white/90 border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-400 focus:bg-white transition-all duration-200 text-gray-800 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-800 hover:file:bg-gray-200 hover:border-gray-300">
+                        </div>
+                        <p class="text-xs text-gray-600 mt-3 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Recommended: Square images work best (PNG, JPG, SVG)
+                        </p>
+                    </div>
+
+                    <!-- QR Code Size -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                            <i class="fas fa-expand-arrows-alt mr-2"></i>
+                            QR Code Size
+                        </label>
+                        <div class="relative">
+                            <div class="w-full h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                                <span class="text-gray-800 font-semibold text-lg">800px (Fixed Size)</span>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2 text-center">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                QR code size is optimized for maximum quality and scanning
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Password Protection -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="text-sm font-medium text-gray-700 flex items-center">
+                                <i class="fas fa-lock mr-2"></i>
+                                Password Protection
+                            </label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="passwordToggle" class="sr-only peer">
+                                <div class="w-11 h-6 bg-white/20 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-800"></div>
+                            </label>
+                        </div>
+                        <div id="passwordSection" class="hidden">
+                            <input type="password" id="qrPassword" placeholder="Enter password for QR code" 
+                                   class="w-full px-4 py-3 bg-white/90 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-400 focus:bg-white transition-all duration-200 text-gray-800 placeholder-gray-500">
+                            <p class="text-xs text-gray-600 mt-2 flex items-center">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                QR code will require this password to access the content
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Color Options -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                        <div class="space-y-3">
+                            <label for="foregroundColor" class="block text-sm font-medium text-gray-700 flex items-center">
+                                <i class="fas fa-palette mr-2"></i>
+                                Foreground Color
+                            </label>
+                            <div class="relative">
+                            <input type="color" id="foregroundColor" value="#000000" 
+                                       class="w-full h-14 bg-white/90 border-2 border-transparent rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-400 hover:scale-105 transition-all duration-200">
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <label for="backgroundColor" class="block text-sm font-medium text-gray-700 flex items-center">
+                                <i class="fas fa-fill-drip mr-2"></i>
+                                Background Color
+                            </label>
+                            <div class="relative">
+                            <input type="color" id="backgroundColor" value="#ffffff" 
+                                       class="w-full h-14 bg-white/90 border-2 border-transparent rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-400 hover:scale-105 transition-all duration-200">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generate Button -->
+                    <button id="generateBtn" 
+                            class="w-full bg-gradient-to-r from-red-600 to-green-600 hover:from-red-700 hover:to-green-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center touch-target">
+                        <i class="fas fa-magic mr-2"></i>
+                        <span id="generateBtnText">Generate QR Code</span>
+                        <div id="loadingSpinner" class="loading-spinner ml-2 hidden"></div>
+                    </button>
+                    
+                    <!-- Mobile-specific help text -->
+                    <div class="mt-4 p-3 bg-white/10 rounded-lg sm:hidden">
+                        <p class="text-gray-600 text-xs text-center">
+                            <i class="fas fa-lightbulb mr-1"></i>
+                            Tip: You can drag and drop images directly onto the logo upload area
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Output Section -->
+                <div class="glass-effect rounded-2xl shadow-2xl p-6 sm:p-8 hover-lift">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-r from-gray-600 to-gray-800 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-qrcode text-white text-sm"></i>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800">Generated QR Code</h2>
+                    </div>
+                    
+                    <div id="qrOutput" class="text-center">
+                        <div class="bg-white/10 rounded-2xl p-8 mb-6 border-2 border-dashed border-white/30">
+                            <div class="flex flex-col items-center justify-center h-64">
+                                <i class="fas fa-qrcode text-6xl text-white/30 mb-4"></i>
+                                <p class="text-gray-600 text-lg">Your QR code will appear here</p>
+                                <p class="text-gray-500 text-sm mt-2">Generate a QR code to get started</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Powered by emilproAI -->
+                        <div id="poweredBy" class="hidden mt-4 mb-6">
+                            <div class="bg-white rounded-xl p-4 border border-gray-200">
+                                <p class="text-gray-600 text-sm flex items-center justify-center">
+                                    <i class="fas fa-code mr-2"></i>
+                                    Powered by 
+                                    <span class="font-semibold text-gray-800 ml-1">All Rights Reserved by emilpro</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Download Buttons -->
+                    <div id="downloadButtons" class="hidden space-y-3 fade-in">
+                        <button id="downloadPNG" 
+                                class="w-full bg-gradient-to-r from-red-500 to-green-500 hover:from-red-600 hover:to-green-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center touch-target">
+                            <i class="fas fa-download mr-2"></i>
+                            <span class="hidden sm:inline">Download as PNG</span>
+                            <span class="sm:hidden">Download PNG</span>
+                        </button>
+                        
+                        <!-- Mobile-specific share options -->
+                        <div class="mt-4 p-3 bg-white/10 rounded-lg sm:hidden">
+                            <p class="text-gray-600 text-xs text-center mb-2">
+                                <i class="fas fa-share-alt mr-1"></i>
+                                Share your QR code
+                            </p>
+                            <div class="flex justify-center space-x-2">
+                                <button onclick="shareQRCode()" 
+                                        class="bg-gradient-to-r from-red-500 to-green-500 hover:from-red-600 hover:to-green-600 text-white px-3 py-2 rounded-lg text-xs transition-all duration-200 touch-target">
+                                    <i class="fas fa-share mr-1"></i> Share
+                                </button>
+                                <button onclick="copyQRCode()" 
+                                        class="bg-gradient-to-r from-green-500 to-red-500 hover:from-green-600 hover:to-red-600 text-white px-3 py-2 rounded-lg text-xs transition-all duration-200 touch-target">
+                                    <i class="fas fa-copy mr-1"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.2.1/dist/flowbite.min.js"></script>
+    <script>
+        class EnhancedQRGenerator {
+            constructor() {
+                this.initializeElements();
+                this.bindEvents();
+                this.currentQRCode = null;
+                this.logoImage = null;
+                this.isGenerating = false;
+            }
+
+            initializeElements() {
+                this.qrTitle = document.getElementById('qrTitle');
+                this.urlInput = document.getElementById('urlInput');
+                this.logoUpload = document.getElementById('logoUpload');
+                this.passwordToggle = document.getElementById('passwordToggle');
+                this.passwordSection = document.getElementById('passwordSection');
+                this.qrPassword = document.getElementById('qrPassword');
+                this.foregroundColor = document.getElementById('foregroundColor');
+                this.backgroundColor = document.getElementById('backgroundColor');
+                this.generateBtn = document.getElementById('generateBtn');
+                this.generateBtnText = document.getElementById('generateBtnText');
+                this.loadingSpinner = document.getElementById('loadingSpinner');
+                this.qrOutput = document.getElementById('qrOutput');
+                this.downloadButtons = document.getElementById('downloadButtons');
+                this.downloadPNG = document.getElementById('downloadPNG');
+                
+                // Fixed QR code size
+                this.qrSize = 800;
+            }
+
+            bindEvents() {
+                this.generateBtn.addEventListener('click', () => this.generateQRCode());
+                this.logoUpload.addEventListener('change', (e) => this.handleLogoUpload(e));
+                this.downloadPNG.addEventListener('click', () => this.downloadQRCode());
+                this.passwordToggle.addEventListener('change', () => this.togglePasswordSection());
+                
+                // Add real-time validation
+                this.urlInput.addEventListener('input', () => this.validateInput());
+                
+                // Add drag and drop for logo
+                this.setupDragAndDrop();
+            }
+
+            setupDragAndDrop() {
+                const logoContainer = this.logoUpload.parentElement;
+                
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    logoContainer.addEventListener(eventName, this.preventDefaults, false);
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    logoContainer.addEventListener(eventName, () => this.highlight(logoContainer), false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    logoContainer.addEventListener(eventName, () => this.unhighlight(logoContainer), false);
+                });
+
+                logoContainer.addEventListener('drop', (e) => this.handleDrop(e), false);
+            }
+
+            preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            highlight(element) {
+                element.classList.add('bg-blue-50', 'border-blue-300');
+            }
+
+            unhighlight(element) {
+                element.classList.remove('bg-blue-50', 'border-blue-300');
+            }
+
+            handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length > 0) {
+                    this.logoUpload.files = files;
+                    const event = new Event('change', { bubbles: true });
+                    this.logoUpload.dispatchEvent(event);
+                }
+            }
+
+            validateInput() {
+                const url = this.urlInput.value.trim();
+                const isValid = url.length > 0;
+                
+                this.generateBtn.disabled = !isValid || this.isGenerating;
+                
+                if (isValid) {
+                    this.urlInput.classList.remove('border-red-300');
+                    this.urlInput.classList.add('border-green-300');
+                } else {
+                    this.urlInput.classList.remove('border-green-300');
+                }
+            }
+
+            togglePasswordSection() {
+                if (this.passwordToggle.checked) {
+                    this.passwordSection.classList.remove('hidden');
+                    this.qrPassword.focus();
+                } else {
+                    this.passwordSection.classList.add('hidden');
+                    this.qrPassword.value = '';
+                }
+            }
+
+            createPasswordProtectedURL(originalUrl, password) {
+                // Create a secure password-protected URL using encryption
+                const encodedUrl = encodeURIComponent(originalUrl);
+                const encodedPassword = encodeURIComponent(password);
+                
+                // Create a simple hash of the password for verification
+                const passwordHash = this.simpleHash(password);
+                
+                // Create encrypted data that doesn't expose the actual password
+                console.log('Storing URL:', originalUrl);
+                const encryptedData = this.encryptData({
+                    url: originalUrl,
+                    hash: passwordHash,
+                    timestamp: Date.now()
+                });
+                
+                // Create URL with encrypted data (password not visible)
+                const verificationUrl = `https://acemcpqrgen.vercel.app/password-verification.html?data=${encodeURIComponent(encryptedData)}`;
+                
+                return verificationUrl;
+            }
+
+            simpleHash(str) {
+                // Simple hash function for password verification
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash; // Convert to 32-bit integer
+                }
+                return Math.abs(hash).toString(36);
+            }
+
+            encryptData(data) {
+                // Simple encryption using base64 and character shifting
+                const jsonStr = JSON.stringify(data);
+                const encoded = btoa(jsonStr);
+                
+                // Simple character shifting for basic obfuscation
+                let encrypted = '';
+                for (let i = 0; i < encoded.length; i++) {
+                    const char = encoded.charCodeAt(i);
+                    encrypted += String.fromCharCode(char + 3);
+                }
+                
+                return btoa(encrypted);
+            }
+
+
+
+            handleLogoUpload(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    // Validate file type
+                    if (!file.type.startsWith('image/')) {
+                        this.showNotification('Please select a valid image file', 'error');
+                        return;
+                    }
+                    
+                    // Validate file size (max 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        this.showNotification('File size must be less than 5MB', 'error');
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.logoImage = new Image();
+                        this.logoImage.crossOrigin = 'anonymous';
+                        
+                        this.logoImage.onload = () => {
+                            console.log('Logo loaded successfully:', this.logoImage.width, 'x', this.logoImage.height);
+                            
+                            // Validate logo dimensions
+                            if (this.logoImage.width < 50 || this.logoImage.height < 50) {
+                                this.showNotification('Logo is too small. Please use an image at least 50x50 pixels.', 'error');
+                                this.logoImage = null;
+                                return;
+                            }
+                            
+                            // Check if logo is too large
+                            if (this.logoImage.width > 2000 || this.logoImage.height > 2000) {
+                                this.showNotification('Logo is very large. Consider using a smaller image for better performance.', 'info');
+                            }
+                            
+                            this.showNotification('Logo loaded successfully!', 'success');
+                        };
+                        
+                        this.logoImage.onerror = (error) => {
+                            console.error('Error loading logo:', error);
+                            this.showNotification('Error loading logo. Please try a different image.', 'error');
+                            this.logoImage = null;
+                        };
+                        
+                        this.logoImage.src = e.target.result;
+                    };
+                    
+                    reader.onerror = () => {
+                        this.showNotification('Error reading file. Please try again.', 'error');
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            async generateQRCode() {
+                const url = this.urlInput.value.trim();
+                if (!url) {
+                    this.showNotification('Please enter a URL or text', 'error');
+                    return;
+                }
+
+                // Check if password protection is enabled
+                if (this.passwordToggle.checked) {
+                    const password = this.qrPassword.value.trim();
+                    if (!password) {
+                        this.showNotification('Please enter a password for protection', 'error');
+                        return;
+                    }
+                    if (password.length < 4) {
+                        this.showNotification('Password must be at least 4 characters', 'error');
+                        return;
+                    }
+                }
+
+                if (this.isGenerating) return;
+
+                this.isGenerating = true;
+                this.generateBtn.disabled = true;
+                this.generateBtnText.textContent = 'Generating...';
+                this.loadingSpinner.classList.remove('hidden');
+
+                try {
+                    // Create password-protected URL if enabled
+                    let qrData = url;
+                    if (this.passwordToggle.checked) {
+                        const password = this.qrPassword.value.trim();
+                        // Create a simple password-protected URL structure
+                        qrData = this.createPasswordProtectedURL(url, password);
+                    } else {
+                        // For regular URLs, use them as they are
+                        qrData = url;
+                    }
+                    
+                    await this.generateWithQRCodeJS(qrData);
+                } catch (error) {
+                    console.error('Error generating QR code:', error);
+                    // Try fallback method
+                    try {
+                        let qrData = url;
+                        if (this.passwordToggle.checked) {
+                            const password = this.qrPassword.value.trim();
+                            qrData = this.createPasswordProtectedURL(url, password);
+                        } else {
+                            // For regular URLs, use them as they are
+                            qrData = url;
+                        }
+                        await this.generateWithFallbackAPI(qrData);
+                    } catch (fallbackError) {
+                        console.error('Fallback method also failed:', fallbackError);
+                        this.showNotification('Error generating QR code. Please refresh the page and try again.', 'error');
+                    }
+                } finally {
+                    this.isGenerating = false;
+                    this.generateBtn.disabled = false;
+                    this.generateBtnText.textContent = 'Generate QR Code';
+                    this.loadingSpinner.classList.add('hidden');
+                }
+            }
+
+            async generateWithQRCodeJS(qrData) {
+                // Check if QRCode library is available
+                if (typeof QRCode === 'undefined') {
+                    throw new Error('QRCode library not loaded. Please refresh the page and try again.');
+                }
+
+                const size = this.qrSize; // Fixed size of 800px
+                const options = {
+                    width: size,
+                    height: size,
+                    color: {
+                        dark: this.foregroundColor.value,
+                        light: this.backgroundColor.value
+                    },
+                    errorCorrectionLevel: this.logoImage ? 'H' : 'M', // Use High error correction when logo is present
+                    margin: 2
+                };
+
+                try {
+                    const qrCodeDataURL = await QRCode.toDataURL(qrData, options);
+                    
+                    // Create canvas to add logo if provided
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = size;
+                    canvas.height = size;
+
+                    const qrImage = new Image();
+                    qrImage.onload = () => {
+                        ctx.drawImage(qrImage, 0, 0, size, size);
+
+                        // Check if logo is ready before adding it
+                        if (this.logoImage && this.logoImage.complete && this.logoImage.naturalWidth > 0) {
+                            console.log('Adding logo to QR code');
+                            this.addLogoToQR(ctx, size);
+                        } else {
+                            console.log('No logo or logo not ready, displaying QR code without logo');
+                            this.displayQRCode(canvas);
+                        }
+                    };
+                    qrImage.onerror = () => {
+                        throw new Error('Failed to load QR code image');
+                    };
+                    qrImage.src = qrCodeDataURL;
+                } catch (error) {
+                    console.error('QRCode generation error:', error);
+                    throw new Error('Failed to generate QR code. Please try again.');
+                }
+            }
+
+            addLogoToQR(ctx, size) {
+                try {
+                    // Check if logo image is properly loaded
+                    if (!this.logoImage || !this.logoImage.complete || this.logoImage.naturalWidth === 0) {
+                        console.warn('Logo image not ready, displaying QR code without logo');
+                        this.displayQRCode(ctx.canvas);
+                        return;
+                    }
+
+                    // Use a smaller logo size to ensure QR code remains scannable
+                    const logoSize = Math.floor(size * 0.15);
+                    const logoX = (size - logoSize) / 2;
+                    const logoY = (size - logoSize) / 2;
+
+                    // Add a larger white background with rounded corners for better QR readability
+                    const padding = 12;
+                    ctx.fillStyle = '#ffffff';
+                    
+                    // Create rounded rectangle (with fallback for older browsers)
+                    if (ctx.roundRect) {
+                        ctx.beginPath();
+                        ctx.roundRect(logoX - padding, logoY - padding, logoSize + (padding * 2), logoSize + (padding * 2), 8);
+                        ctx.fill();
+                    } else {
+                        // Fallback for browsers without roundRect support
+                        ctx.fillRect(logoX - padding, logoY - padding, logoSize + (padding * 2), logoSize + (padding * 2));
+                    }
+
+                    // Add a subtle border to separate logo from QR code
+                    ctx.strokeStyle = '#e5e7eb';
+                    ctx.lineWidth = 2;
+                    if (ctx.roundRect) {
+                        ctx.beginPath();
+                        ctx.roundRect(logoX - padding, logoY - padding, logoSize + (padding * 2), logoSize + (padding * 2), 8);
+                        ctx.stroke();
+                    } else {
+                        ctx.strokeRect(logoX - padding, logoY - padding, logoSize + (padding * 2), logoSize + (padding * 2));
+                    }
+
+                    // Draw logo with proper scaling and error handling
+                    ctx.save();
+                    
+                    // Create clipping path for rounded logo
+                    if (ctx.roundRect) {
+                        ctx.beginPath();
+                        ctx.roundRect(logoX, logoY, logoSize, logoSize, 4);
+                        ctx.clip();
+                    }
+                    
+                    // Ensure image is drawn with proper error handling
+                    try {
+                        ctx.drawImage(this.logoImage, logoX, logoY, logoSize, logoSize);
+                        console.log('Logo drawn successfully');
+                    } catch (drawError) {
+                        console.error('Error drawing logo:', drawError);
+                        // If drawing fails, just show QR code without logo
+                        ctx.restore();
+                        this.displayQRCode(ctx.canvas);
+                        return;
+                    }
+                    
+                    ctx.restore();
+                    this.displayQRCode(ctx.canvas);
+                    
+                } catch (error) {
+                    console.error('Error in addLogoToQR:', error);
+                    // Fallback: show QR code without logo
+                    this.displayQRCode(ctx.canvas);
+                }
+            }
+
+            displayQRCode(canvas) {
+                this.currentQRCode = canvas;
+                const title = this.qrTitle.value.trim();
+                
+                this.qrOutput.innerHTML = `
+                    ${title ? `
+                    <!-- QR Code Title -->
+                    <div class="mb-4 fade-in">
+                        <h3 class="text-xl font-bold text-gray-800 text-center bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                            <i class="fas fa-tag mr-2"></i>
+                            ${title}
+                        </h3>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="bg-white/10 rounded-2xl p-6 mb-6 border-2 border-white/20 fade-in">
+                        <div class="flex justify-center">
+                            <img src="${canvas.toDataURL()}" alt="Generated QR Code" 
+                                 class="max-w-full h-auto rounded-xl shadow-2xl hover:scale-105 transition-transform duration-300">
+                        </div>
+                    </div>
+                    
+                    <!-- Powered by emilproAI -->
+                    <div class="mt-4 mb-6">
+                        <div class="bg-white rounded-xl p-4 border border-gray-200">
+                            <p class="text-gray-600 text-sm flex items-center justify-center">
+                                <i class="fas fa-code mr-2"></i>
+                                Powered by 
+                                <span class="font-semibold text-gray-800 ml-1">emilpro MIS 2026</span>
+                            </p>
+                        </div>
+                    </div>
+                `;
+                
+                this.downloadButtons.classList.remove('hidden');
+                this.showNotification('QR code generated successfully!', 'success');
+            }
+
+            downloadQRCode() {
+                if (!this.currentQRCode) {
+                    this.showNotification('Please generate a QR code first', 'error');
+                    return;
+                }
+
+                const title = this.qrTitle.value.trim();
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                const filename = title ? `${title.replace(/[^a-zA-Z0-9]/g, '-')}-${timestamp}.png` : `qr-code-${timestamp}.png`;
+
+                // Create a composite canvas with title and QR code
+                const compositeCanvas = document.createElement('canvas');
+                const ctx = compositeCanvas.getContext('2d');
+                
+                const qrSize = this.currentQRCode.width;
+                const titleHeight = title ? 80 : 0;
+                const padding = 40;
+                const totalHeight = qrSize + titleHeight + padding * 2;
+                
+                compositeCanvas.width = qrSize + padding * 2;
+                compositeCanvas.height = totalHeight;
+                
+                // Fill background with white
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, compositeCanvas.width, compositeCanvas.height);
+                
+                // Add title if provided
+                if (title) {
+                    ctx.fillStyle = '#1f2937';
+                    ctx.font = 'bold 24px Arial, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(title, compositeCanvas.width / 2, 50);
+                }
+                
+                // Add QR code
+                ctx.drawImage(this.currentQRCode, padding, titleHeight + padding, qrSize, qrSize);
+
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = compositeCanvas.toDataURL('image/png');
+                link.click();
+                this.showNotification('PNG downloaded successfully!', 'success');
+            }
+
+            async generateWithFallbackAPI(qrData) {
+                const size = this.qrSize; // Fixed size of 800px
+                const foregroundColor = this.foregroundColor.value.replace('#', '');
+                const backgroundColor = this.backgroundColor.value.replace('#', '');
+                
+                // Use a free QR API service as fallback
+                const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(qrData)}&color=${foregroundColor}&bgcolor=${backgroundColor}`;
+                
+                return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = size;
+                    canvas.height = size;
+                    
+                    ctx.drawImage(img, 0, 0, size, size);
+                    
+                    // Add logo if provided
+                    if (this.logoImage) {
+                        this.addLogoToQR(ctx, size);
+                    } else {
+                        this.displayQRCode(canvas);
+                    }
+                        resolve(canvas);
+                };
+                
+                img.onerror = () => {
+                        reject(new Error('Failed to load QR code from API'));
+                };
+                
+                img.src = apiUrl;
+                });
+            }
+
+
+            showNotification(message, type = 'info') {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-all duration-300 ${
+                    type === 'success' ? 'bg-green-500 text-white' :
+                    type === 'error' ? 'bg-red-500 text-white' :
+                    'bg-blue-500 text-white'
+                }`;
+                
+                notification.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'} mr-2"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Auto remove after 3 seconds
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.qrGenerator = new EnhancedQRGenerator();
+        });
+
+        // Debug function to check logo status
+        function debugLogoStatus() {
+            if (window.qrGenerator) {
+                console.log('Logo status:', {
+                    hasLogo: !!window.qrGenerator.logoImage,
+                    logoComplete: window.qrGenerator.logoImage?.complete,
+                    logoNaturalWidth: window.qrGenerator.logoImage?.naturalWidth,
+                    logoNaturalHeight: window.qrGenerator.logoImage?.naturalHeight,
+                    logoSrc: window.qrGenerator.logoImage?.src?.substring(0, 50) + '...'
+                });
+            }
+        }
+
+        // Mobile-specific functions
+        function shareQRCode() {
+            if (!window.qrGenerator || !window.qrGenerator.currentQRCode) {
+                alert('Please generate a QR code first!');
+                return;
+            }
+
+            const canvas = window.qrGenerator.currentQRCode;
+            const title = window.qrGenerator.qrTitle.value.trim() || 'QR Code';
+            const url = window.qrGenerator.urlInput.value.trim();
+            
+            if (navigator.share) {
+                canvas.toBlob((blob) => {
+                    if (!blob) {
+                        window.qrGenerator.showNotification('Unable to share QR code', 'error');
+                        return;
+                    }
+
+                    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                    const filename = title ? `${title.replace(/[^a-zA-Z0-9]/g, '-')}-${timestamp}.png` : `qr-code-${timestamp}.png`;
+                    const file = new File([blob], filename, { type: 'image/png' });
+                    
+                    const shareData = {
+                        title: title,
+                        text: url ? `QR Code for: ${url}` : 'Check out this QR code!',
+                        files: [file]
+                    };
+
+                    navigator.share(shareData)
+                        .then(() => {
+                            window.qrGenerator.showNotification('QR code shared successfully!', 'success');
+                        })
+                        .catch((error) => {
+                            if (error.name !== 'AbortError') {
+                                console.error('Error sharing:', error);
+                                window.qrGenerator.showNotification('Unable to share QR code', 'error');
+                            }
+                        });
+                });
+            } else {
+                // Fallback to download if share is not supported
+                window.qrGenerator.showNotification('Share not supported. Downloading instead...', 'info');
+                window.qrGenerator.downloadQRCode();
+            }
+        }
+
+        function copyQRCode() {
+            if (!window.qrGenerator || !window.qrGenerator.currentQRCode) {
+                alert('Please generate a QR code first!');
+                return;
+            }
+
+            const canvas = window.qrGenerator.currentQRCode;
+            
+            if (navigator.clipboard && navigator.clipboard.write) {
+                canvas.toBlob((blob) => {
+                    if (!blob) {
+                        window.qrGenerator.showNotification('Unable to copy QR code', 'error');
+                        return;
+                    }
+
+                    navigator.clipboard.write([
+                        new ClipboardItem({
+                            'image/png': blob
+                        })
+                    ]).then(() => {
+                        window.qrGenerator.showNotification('QR code copied to clipboard!', 'success');
+                    }).catch((error) => {
+                        console.error('Error copying:', error);
+                        window.qrGenerator.showNotification('Unable to copy to clipboard', 'error');
+                    });
+                });
+            } else {
+                window.qrGenerator.showNotification('Clipboard not supported on this device', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
